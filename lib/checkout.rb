@@ -1,12 +1,15 @@
 class Checkout
+  attr_reader :order
+
   def initialize(*promotions)
-    @promotions = promotions
+    @promotions = promotions || []
     @order = Order.new
     @total = 0
   end
 
   def scan(item)
     @order << item
+    @total = @order.total
   end
 
   def total
@@ -15,6 +18,8 @@ class Checkout
   end
 
   def recalculate!
+    return @total if @promotions.empty?
+
     @promotions.each do |promotion|
       @total = promotion.perform(@order)
     end
